@@ -1,6 +1,6 @@
 // components/AccountCard.jsx
 import StatusBadge from "./StatusBadge";
-import { formatWon, maskAccountNo, formatWonMasked } from "../utils/format";
+import { maskAccountNo, formatWonMasked } from "../utils/format";
 
 function AccountCard({ accountNo, accountType, balance, showFullNo, showAmount, onDeposit }) {
   return (
@@ -17,7 +17,7 @@ function AccountCard({ accountNo, accountType, balance, showFullNo, showAmount, 
       {/* Account Card 안에 버튼을 누르면 1만원 입금 추가
        (balance) => { balance + 10000; console.log(balance) 라고 부르면 balance라는 공갈문자로
        화면 위의 이벤트를 사용할 뿐입니다. */}
-      <button className="btn" onClick={onDeposit}>1만원 입금</button>
+      <button className="btn" onClick={onDeposit} >1만원 입금</button>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import AccountCard  from './components/AccountCard.jsx'
 import Header from './components/Header'
 import { useState } from 'react'
 import { transactions as initialTransactions } from './data/mockData'
-import { formatWon } from './utils/format.js'
+import { formatWonMasked } from './utils/format.js'
 import ExchangeRate from './components/ExchangeRate.jsx'
 import TransactionList from './components/TransactionList.jsx'
 import { UserProvider } from './contexts/UserContext.jsx'
@@ -68,12 +68,32 @@ function App() {
   // 입력받은 accountId가 일치하는 고객의 계좌 dict에서만
   // map 함수를 가지고 특정 dict의 모든 값-value에 접근해서
   // balance 라는 key에만 10000을 더합니다.
-  function handleDeposit(accountId) {
+    function handleDeposit(accountId) {
+    const target = accounts.find((a) => a.accountId === accountId)
+    const nextBalance = target.balance + 10000
+
     setAccounts(
       accounts.map((a) => 
-        a.accountId === accountId ? {...a, balance: a.balance + 10000} : a)
+        a.accountId === accountId ? {...a, balance: nextBalance} : a)
     )
+
+	  // 아래 setState 추가
+    setTransactions((prev) => [
+      {
+        txId: Date.now(),
+        accountId: accountId,
+        txType: "입금",
+        amount: 10000,
+        balanceAfter: nextBalance,
+        category: "입금",
+        memo: "입금",
+        counterparty: "입금 버튼",
+        txDatetime: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }),
+      },
+      ...prev,
+    ])
   }
+
 
    // 추가: 이체 폼(TransferForm)에서 이체 버튼을 누르면 이 함수가 실행됩니다.
   // 계좌 잔액과 거래내역, 이 두 state 를 한 번에 갱신하는 것이 이번 세션의 핵심입니다.
@@ -97,7 +117,8 @@ function App() {
         category: "이체",
         memo: memo || "이체",
         counterparty: toAccount,
-        txDatetime: new Date().toISOString().slice(0, 19),
+        txDatetime: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }).slice(0, 19),
+        
       },
       ...prev, // 새 거래를 맨 앞에
     ])
@@ -116,17 +137,18 @@ function App() {
     <UserProvider user={{ name: "김연지", grade: "우수" }}>    
     <Header />
 
-    <button onClick={() => setShowFullNo(!showFullNo)}>
-      {/* 논리연산자를 사용해서 같은 화면을 조건부 렌더링해보세요 */}
-      {/* showFullNo ? "계좌번호 숨기기" : "계좌번호 보기" */}
-      {showFullNo && "계좌번호 숨기기"}
-      {!showFullNo && "계좌번호 보기"}
-    </button>
+    <div className='toolbar'>
+      <button className='btn btn-ghost' onClick={() => setShowFullNo(!showFullNo)}>
+        {/* 논리연산자를 사용해서 같은 화면을 조건부 렌더링해보세요 */}
+        {/* showFullNo ? "계좌번호 숨기기" : "계좌번호 보기" */}
+        {showFullNo && "계좌번호 숨기기"}
+        {!showFullNo && "계좌번호 보기"}
+      </button>
 
-    <button onClick={() => setShowAmount(!showAmount)}>
-      {showAmount ? "금액 숨기기" : "금액 보기"}
-    </button>
-    
+      <button  className='btn btn-ghost' onClick={() => setShowAmount(!showAmount)}>
+        {showAmount ? "금액 보기" : "금액 숨기기" }
+      </button>
+    </div>
     <Clock />
     {/* class 는 JS의 예약어이므로 JSX에서는 className으로 대신 사용합니다.*/}
 
@@ -136,8 +158,8 @@ function App() {
     </Panel>
      
     <div className="total">
-      <p> 총 자산 </p>
-      <p> {formatWon(totalBalance) } </p>
+      <p className="muted" > 총 자산 </p>
+      <p className="balance" > {formatWonMasked(totalBalance, showAmount) } </p>
     </div>
     {/* 사용 */}
 

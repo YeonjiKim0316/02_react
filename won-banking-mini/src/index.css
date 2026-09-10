@@ -206,3 +206,28 @@ header h1 {
   color: var(--muted);
   margin-bottom: 8px;
 }
+
+
+
+.field { 
+  margin-bottom: 12px; 
+}
+
+.field label { 
+  display: block; 
+  font-size: 13px; 
+  color: var(--muted); 
+  margin-bottom: 4px; 
+}
+
+.field input { 
+  width: 100%;
+  padding: 8px 10px; 
+  border: 1px solid var(--line); 
+  border-radius: 8px; 
+}
+
+.error { 
+  color: #d93025; 
+  font-size: 13px; 
+}
